@@ -11,13 +11,72 @@ pub fn build(b: *std.Build) !void {
         .link_libc = true,
     });
 
+    // fetch the files out of the c library and expose them to this library
+    const dep_nfd = b.dependency(
+        "nativefiledialog",
+        .{
+            .target = target,
+            .optimize=optimize 
+        }
+    );
+    const wf = b.addNamedWriteFiles("nativefiledialog");
+    _ = wf.addCopyDirectory(
+        dep_nfd.path("."),
+        ".",
+        .{}
+    );
+    // in case other dependencies need to be added
+    const dep_root = wf.getDirectory();
+
     const cflags = [_][]const u8{"-Wall"};
-    nfd_mod.addIncludePath(b.path("submodules/nativefiledialog/src/include"));
-    nfd_mod.addCSourceFile(.{ .file = b.path("submodules/nativefiledialog/src/nfd_common.c"), .flags = &cflags });
+    nfd_mod.addIncludePath(
+        dep_root.path(b, b.pathJoin(&.{  "src", "include" }))
+    );
+    nfd_mod.addCSourceFile(
+        .{
+            .file = dep_root.path(
+                b,
+                b.pathJoin(
+                    &.{ "src", "nfd_common.c" }
+                )
+            ),
+            .flags = &cflags ,
+        }
+    );
     switch (target.result.os.tag) {
-        .macos => nfd_mod.addCSourceFile(.{ .file = b.path("submodules/nativefiledialog/src/nfd_cocoa.m"), .flags = &cflags }),
-        .windows => nfd_mod.addCSourceFile(.{ .file = b.path("submodules/nativefiledialog/src/nfd_win.cpp"), .flags = &cflags }),
-        .linux => nfd_mod.addCSourceFile(.{ .file = b.path("submodules/nativefiledialog/src/nfd_gtk.c"), .flags = &cflags }),
+        .macos => nfd_mod.addCSourceFile(
+            .{
+                .file = dep_root.path(
+                    b,
+                    b.pathJoin(
+                        &.{ "src", "nfd_cocoa.m" }
+                    )
+                ),
+                .flags = &cflags 
+            }
+        ),
+        .windows => nfd_mod.addCSourceFile(
+            .{
+                .file = dep_root.path(
+                    b,
+                    b.pathJoin(
+                        &.{ "src", "nfd_win.cpp" }
+                    )
+                ),
+                .flags = &cflags 
+            }
+        ),
+        .linux => nfd_mod.addCSourceFile(
+            .{
+                .file = dep_root.path(
+                    b,
+                    b.pathJoin(
+                        &.{ "src", "nfd_gtk.c" }
+                    )
+                ),
+                .flags = &cflags 
+            }
+        ),
         else => @panic("unsupported OS"),
     }
 
@@ -44,7 +103,9 @@ pub fn build(b: *std.Build) !void {
         .target = target,
         .optimize = optimize,
     });
-    demo.addIncludePath(b.path("submodules/nativefiledialog/src/include"));
+    demo.addIncludePath(
+        dep_root.path(b, b.pathJoin(&.{ "src","include"}))
+    );
     demo.root_module.addImport("nfd", nfd_mod);
     b.installArtifact(demo);
 

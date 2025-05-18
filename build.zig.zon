@@ -4,6 +4,10 @@
     .fingerprint = 0x591b036b62f37737, // Changing this has security and trust implications.
     .minimum_zig_version = "0.14.0",
     .dependencies = .{
+        .nativefiledialog = .{
+            .url = "git+https://github.com/meshula/nativefiledialog#28c9fc80c3aface28683d63cb96b43228c04d9ea",
+            .hash = "N-V-__8AAEBuBgBRc832aNp5-AQTs6ZlHS8Vp452zZSpOLKS",
+        },
     },
 
     .paths = .{
@@ -12,6 +16,5 @@
         "src",
         "LICENSE",
         "README.md",
-        "submodules/nativefiledialog/src/",
     },
 }
