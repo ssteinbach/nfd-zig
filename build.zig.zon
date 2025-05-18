@@ -12,6 +12,6 @@
         "src",
         "LICENSE",
         "README.md",
-        "submodules/nativefiledialog",
+        "submodules/nativefiledialog/src/",
     },
 }
