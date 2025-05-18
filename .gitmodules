@@ -1,0 +1,3 @@
+[submodule "submodules/nativefiledialog"]
+	path = submodules/nativefiledialog
+	url = git@github.com:meshula/nativefiledialog.git
