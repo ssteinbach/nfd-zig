@@ -12,12 +12,12 @@ pub fn build(b: *std.Build) !void {
     });
 
     const cflags = [_][]const u8{"-Wall"};
-    nfd_mod.addIncludePath(b.path("nativefiledialog/src/include"));
-    nfd_mod.addCSourceFile(.{ .file = b.path("nativefiledialog/src/nfd_common.c"), .flags = &cflags });
+    nfd_mod.addIncludePath(b.path("submodules/nativefiledialog/src/include"));
+    nfd_mod.addCSourceFile(.{ .file = b.path("submodules/nativefiledialog/src/nfd_common.c"), .flags = &cflags });
     switch (target.result.os.tag) {
-        .macos => nfd_mod.addCSourceFile(.{ .file = b.path("nativefiledialog/src/nfd_cocoa.m"), .flags = &cflags }),
-        .windows => nfd_mod.addCSourceFile(.{ .file = b.path("nativefiledialog/src/nfd_win.cpp"), .flags = &cflags }),
-        .linux => nfd_mod.addCSourceFile(.{ .file = b.path("nativefiledialog/src/nfd_gtk.c"), .flags = &cflags }),
+        .macos => nfd_mod.addCSourceFile(.{ .file = b.path("submodules/nativefiledialog/src/nfd_cocoa.m"), .flags = &cflags }),
+        .windows => nfd_mod.addCSourceFile(.{ .file = b.path("submodules/nativefiledialog/src/nfd_win.cpp"), .flags = &cflags }),
+        .linux => nfd_mod.addCSourceFile(.{ .file = b.path("submodules/nativefiledialog/src/nfd_gtk.c"), .flags = &cflags }),
         else => @panic("unsupported OS"),
     }
 
@@ -44,7 +44,7 @@ pub fn build(b: *std.Build) !void {
         .target = target,
         .optimize = optimize,
     });
-    demo.addIncludePath(b.path("nativefiledialog/src/include"));
+    demo.addIncludePath(b.path("submodules/nativefiledialog/src/include"));
     demo.root_module.addImport("nfd", nfd_mod);
     b.installArtifact(demo);
 
