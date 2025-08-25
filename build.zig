@@ -110,9 +110,13 @@ pub fn build(
     var demo = b.addExecutable(
         .{
             .name = "nfd-demo",
-            .root_source_file = b.path("src/demo.zig"),
-            .target = target,
-            .optimize = optimize,
+            .root_module = b.createModule(
+                .{
+                    .root_source_file = b.path("src/demo.zig"),
+                    .target = target,
+                    .optimize = optimize,
+                }
+            ),
         }
     );
     demo.addIncludePath(
